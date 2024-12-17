@@ -3,9 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Number Guessing Game</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        #game-container {
+            margin-top: 50px;
+            padding: 20px;
+            background: #34495e;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 100px;
+            border: 2px solid #16a085;
+            border-radius: 5px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #16a085;
+            color: #ecf0f1;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1abc9c;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        #attempts {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-    
+    <div id="game-container">
+        <h1>Number Guessing Game</h1>
+        <p>Guess the number between <span id="min">1</span> and <span id="max">99</span></p>
+        <input type="number" id="guess" min="1" max="99" placeholder="Enter number">
+        <button onclick="makeGuess()">Submit Guess</button>
+        <div id="message"></div>
+        <div id="attempts">Attempts left: <span id="remaining">7</span></div>
+    </div>
+
+    <script>
+        let min = 1;
+        let max = 99;
+        let correctNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+        let attemptsLeft = 7;
+
+        function makeGuess() {
+            const guessInput = document.getElementById('guess');
+            const messageDiv = document.getElementById('message');
+            const remainingDiv = document.getElementById('remaining');
+            const userGuess = parseInt(guessInput.value, 7);
+
+            if (isNaN(userGuess) || userGuess < min || userGuess > max) {
+                messageDiv.textContent = `Please enter a number between ${min} and ${max}.`;
+                return;
+            }
+
+            attemptsLeft--;
+            remainingDiv.textContent = attemptsLeft;
+
+            if (userGuess === correctNumber) {
+                messageDiv.textContent = '🎉 Congratulations! You guessed the correct number!';
+                messageDiv.style.color = 'green';
+                disableGame();
+            } else if (attemptsLeft === 0) {
+                messageDiv.textContent = `💔 Game over! The correct number was ${correctNumber}.`;
+                messageDiv.style.color = 'red';
+                disableGame();
+            } else if (userGuess < correctNumber) {
+                min = Math.max(userGuess + 1, min);
+                messageDiv.textContent = `Too low! Try again between ${min} and ${max}.`;
+            } else {
+                max = Math.min(userGuess - 1, max);
+                messageDiv.textContent = `Too high! Try again between ${min} and ${max}.`;
+            }
+
+            document.getElementById('min').textContent = min;
+            document.getElementById('max').textContent = max;
+            guessInput.value = '';
+        }
+
+        function disableGame() {
+            document.getElementById('guess').disabled = true;
+            document.querySelector('button').disabled = true;
+        }
+    </script>
 </body>
 </html>
